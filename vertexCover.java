@@ -6,26 +6,51 @@ class vertexCover {
 
     // graph is the undirected graph G and k is the number in k-vertex cover
     public static int[] findVertexCover(int adjMatrix[][], int k) {
-        int numRows = adjMatrix.length;
-        int numColumns = adjMatrix[0].length;
-
-        // store column sums
-        int columnTotal[] = new int[numRows];
-
-        for (int i = 0; i < numRows; i++) {
-            int count = 0;
-            for (int j = 0; j < numColumns; j++) {
-                count += adjMatrix[i][j];
-            }
-            columnTotal[i] = count;
-        }
-
-        // print column sums
-        for (int i = 0; i < columnTotal.length; i++) {
-            System.out.println(columnTotal[i]);
-        }
 
         int[] vertexCover = new int[k];
+
+        int count = 0;
+        while (count < k) {
+
+            // find the index with the largest sum
+            int numRows = adjMatrix.length;
+            int numColumns = adjMatrix[0].length;
+
+            // store column sums
+            int columnTotal[] = new int[numRows];
+
+            for (int i = 0; i < numRows; i++) {
+                int counter = 0;
+                for (int j = 0; j < numColumns; j++) {
+                    counter += adjMatrix[i][j];
+                }
+                columnTotal[i] = counter;
+            }
+
+            // add index to vertex cover array
+            int largest = 0;
+            for (int i = 0; i < columnTotal.length; i++) {
+                if (columnTotal[i] > columnTotal[largest]) {
+                    largest = i;
+                }
+            }
+
+            // add vertex with most edges to vertex cover
+            vertexCover[count] = columnTotal[largest];
+
+            // turn subsequent rows to 0
+            for (int i = 0; i < numRows; i++) {
+                adjMatrix[largest][i] = 0;
+            }
+
+            // turn subsequent columns to 0
+            for (int i = 0; i < numColumns; i++) {
+                adjMatrix[i][largest] = 0;
+            }
+
+            // increment count
+            count++;
+        }
 
         return vertexCover;
     }
@@ -53,6 +78,16 @@ class vertexCover {
         adjMatrix[3][2] = 0;
         adjMatrix[3][3] = 0;
 
+        int numVertex = 4;
+        int numEdge = 4;
+        int k = 0;
+
+        if (numVertex == numEdge) {
+            k = 2;
+        } else {
+            k = numEdge - numVertex;
+        }
+
         for (int[] x : adjMatrix) {
             for (int y : x) {
                 System.out.print(y + " ");
@@ -60,7 +95,10 @@ class vertexCover {
             System.out.println();
         }
 
-        int vertexCover[] = findVertexCover(adjMatrix, 2);
+        int vertexCover[] = findVertexCover(adjMatrix, k);
+        for (int i = 0; i < vertexCover.length; i++) {
+            System.out.print(i + " ");
+        }
 
     }
 }
