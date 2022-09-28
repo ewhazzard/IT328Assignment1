@@ -14,7 +14,7 @@ class vertexCover {
 
             // find the index with the largest sum
             int numRows = adjMatrix.length;
-            int numColumns = adjMatrix[0].length;
+            int numColumns = numRows;
 
             // store column sums
             int columnTotal[] = new int[numRows];
@@ -55,49 +55,52 @@ class vertexCover {
         return vertexCover;
     }
 
-    public static void main(String args[]) {
-        int adjMatrix[][] = new int[4][4];
+    public static void main(String args[]) throws FileNotFoundException {
+        if (0 < args.length) {
+            File file = new File(args[0]);
+            Scanner scan = new Scanner(file);
+            scan.useDelimiter("[\\s,]+");
 
-        adjMatrix[0][0] = 0;
-        adjMatrix[0][1] = 1;
-        adjMatrix[0][2] = 1;
-        adjMatrix[0][3] = 1;
+            System.out.println("*A Minimum Vertex Cover of every graph in graphs2022.txt*");
+            System.out.println("\t(|V|,|E|) (size, ms used) Vertex Cover");
+            int counter = 1;
+            while (scan.hasNextInt()) {
+                int n = scan.nextInt();
+                int[][] adjMatrix = new int[n][n];
 
-        adjMatrix[1][0] = 1;
-        adjMatrix[1][1] = 0;
-        adjMatrix[1][2] = 1;
-        adjMatrix[1][3] = 0;
+                int edgeCount = 0;
 
-        adjMatrix[2][0] = 1;
-        adjMatrix[2][1] = 1;
-        adjMatrix[2][2] = 0;
-        adjMatrix[2][3] = 0;
+                for (int i = 0; i < n; i++) {
+                    for (int j = 0; j < n; j++) {
+                        int next = scan.nextInt();
+                        adjMatrix[i][j] = next;
+                        edgeCount += next;
+                    }
+                }
+                int vertexCount = n;
+                edgeCount = (edgeCount - vertexCount) / 2;
 
-        adjMatrix[3][0] = 1;
-        adjMatrix[3][1] = 0;
-        adjMatrix[3][2] = 0;
-        adjMatrix[3][3] = 0;
+                // how do I calculate k?!
+                int k = 3;
 
-        int numVertex = 4;
-        int numEdge = 4;
-        int k = 0;
+                long startTime = System.nanoTime();
+                int vertexCover[] = findVertexCover(adjMatrix, k);
+                long endTime = System.nanoTime();
 
-        if (numVertex == numEdge) {
-            k = 2;
-        } else {
-            k = numEdge - numVertex;
-        }
-
-        for (int[] x : adjMatrix) {
-            for (int y : x) {
-                System.out.print(y + " ");
+                long timeElapsed = (endTime - startTime) / 1000000;
+                System.out.print("G" + counter + " (" + vertexCount + ", " + edgeCount + ") ");
+                System.out.print("(size = " + k + " ms = " + timeElapsed + ") {");
+                for (int i = 0; i < vertexCover.length; i++) {
+                    System.out.print(vertexCover[i] + ",");
+                }
+                System.out.print("}\n");
+                counter++;
             }
-            System.out.println();
-        }
 
-        int vertexCover[] = findVertexCover(adjMatrix, k);
-        for (int i = 0; i < vertexCover.length; i++) {
-            System.out.print(i + " ");
+            scan.close();
+        } else {
+            System.err.println("Invalid argument");
+            System.exit(0);
         }
 
     }
