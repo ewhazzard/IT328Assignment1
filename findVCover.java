@@ -84,15 +84,17 @@ public class findVCover {
                     adjMatrix[i][i] = 0;
                 }
 
-                // how do I calculate k?!
+                // Start time of calculating the vertex cover
                 long startTime = System.nanoTime();
 
-                long endTime = System.nanoTime();
+                
                 int vertexCover[] = {};
-                for (int k = 0; k < vertexCount; k++){
+                int k = 0;
+                while(vertexCover.length == 0){
                     vertexCover = findVertexCover(adjMatrix, k);
                 }
 
+                long endTime = System.nanoTime();
                 long timeElapsed = (endTime - startTime) / 1000000;
                 System.out.print("G" + counter + " (" + vertexCount + ", " + edgeCount + ")");
                 System.out.print("(size = " + k + " ms = " + timeElapsed + ") {");
