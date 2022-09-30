@@ -89,9 +89,10 @@ public class findVCover {
 
                 
                 int vertexCover[] = {};
-                int k = 0;
-                while(vertexCover.length == 0){
+                int k = 1;
+                while(vertexCover.length == 0 && k < vertexCount){
                     vertexCover = findVertexCover(adjMatrix, k);
+                    k++;
                 }
 
                 long endTime = System.nanoTime();
