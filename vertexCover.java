@@ -57,6 +57,7 @@ class vertexCover {
 
     public static void main(String args[]) throws FileNotFoundException {
         if (0 < args.length) {
+            // get file to scan
             File file = new File(args[0]);
             Scanner scan = new Scanner(file);
             scan.useDelimiter("[\\s,]+");
@@ -64,22 +65,28 @@ class vertexCover {
             System.out.println("*A Minimum Vertex Cover of every graph in graphs2022.txt*");
             System.out.println("\t(|V|,|E|) (size, ms used) Vertex Cover");
             int counter = 1;
+            // scan until there are no more lines
             while (scan.hasNextInt()) {
+                // n is the number of rows and columns of the adj matrix
                 int n = scan.nextInt();
                 int[][] adjMatrix = new int[n][n];
 
                 int edgeCount = 0;
 
+                // count the edges
                 for (int i = 0; i < n; i++) {
                     for (int j = 0; j < n; j++) {
+                        // get next int in each line and add to adj matrix
                         int next = scan.nextInt();
                         adjMatrix[i][j] = next;
+                        // add value (0 or 1) to the edge count
                         edgeCount += next;
                     }
                 }
                 int vertexCount = n;
                 edgeCount = (edgeCount - vertexCount) / 2;
 
+                // set diagonal to 0 for easier processing
                 for (int i = 0; i < adjMatrix.length; i++) {
                     adjMatrix[i][i] = 0;
                 }
@@ -87,10 +94,12 @@ class vertexCover {
                 // how do I calculate k?!
                 int k = 3;
 
+                // time vertexCover operation
                 long startTime = System.nanoTime();
                 int vertexCover[] = findVertexCover(adjMatrix, k);
                 long endTime = System.nanoTime();
 
+                // find time in ms
                 long timeElapsed = (endTime - startTime) / 1000000;
                 System.out.print("G" + counter + " (" + vertexCount + ", " + edgeCount + ")");
                 System.out.print("(size = " + k + " ms = " + timeElapsed + ") {");
