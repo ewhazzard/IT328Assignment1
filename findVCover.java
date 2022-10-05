@@ -3,17 +3,17 @@ import java.io.*;
 import java.util.*;
 
 public class findVCover {
-    
-    public static int[] findVertexCover(int adjMatrix[][], int k) {
 
-        int[] vertexCover = new int[k];
+    public static ArrayList<Integer> findVertexCover(int adjMatrix[][], int k) {
+
+        ArrayList<Integer> vertexCover = new ArrayList<Integer>();
+
+        // find the index with the largest sum
+        int numRows = adjMatrix.length;
+        int numColumns = numRows;
 
         int count = 0;
         while (count < k) {
-
-            // find the index with the largest sum
-            int numRows = adjMatrix.length;
-            int numColumns = numRows;
 
             // store column sums
             int columnTotal[] = new int[numRows];
@@ -35,7 +35,7 @@ public class findVCover {
             }
 
             // add vertex with most edges to vertex cover
-            vertexCover[count] = largest;
+            vertexCover.add(largest);
 
             // turn subsequent rows to 0
             for (int i = 0; i < numRows; i++) {
@@ -51,9 +51,18 @@ public class findVCover {
             count++;
         }
 
+        for (int i = 0; i < numRows; i++) {
+            for (int j = 0; j < numColumns; j++) {
+                if (adjMatrix[i][j] == 1) {
+                    System.out.println("Not empty");
+                    return null;
+                }
+            }
+        }
+
         return vertexCover;
     }
-    
+
     public static void main(String args[]) throws FileNotFoundException {
         if (0 < args.length) {
             File file = new File(args[0]);
@@ -87,27 +96,38 @@ public class findVCover {
                 // Start time of calculating the vertex cover
                 long startTime = System.nanoTime();
 
-                
-                int vertexCover[] = {};
-                int k = 1;
-                while(vertexCover.length == 0 && k < vertexCount){
+                ArrayList<Integer> vertexCover = new ArrayList<Integer>();
+                ArrayList<Integer> previous = new ArrayList<Integer>();
+                int k = vertexCount - 1;
+                while (vertexCover != null && k > 0) {
+                    previous = vertexCover;
                     vertexCover = findVertexCover(adjMatrix, k);
-                    k++;
+                    k--;
+                }
+
+                if (k == 0) {
+                    System.out.println("No vertex cover available");
+                }
+
+                k += 1;
+                vertexCover = previous;
+
+                for (int i = 0; i < vertexCover.size(); i++) {
+                    System.out.print(vertexCover.get(i) + " ");
                 }
 
                 long endTime = System.nanoTime();
                 long timeElapsed = (endTime - startTime) / 1000000;
                 System.out.print("G" + counter + " (" + vertexCount + ", " + edgeCount + ")");
                 System.out.print("(size = " + k + " ms = " + timeElapsed + ") {");
-                for (int i = 0; i < vertexCover.length; i++) {
-                    System.out.print(vertexCover[i] + ",");
+                for (int i = 0; i < vertexCover.size(); i++) {
+                    System.out.print(vertexCover.get(i) + ",");
                 }
                 System.out.print("}\n");
                 counter++;
             }
             scan.close();
-        }
-        else {
+        } else {
             System.err.println("Invalid argument");
             System.exit(0);
         }

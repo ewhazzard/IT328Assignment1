@@ -5,12 +5,18 @@ import java.util.*;
 class vertexCover {
 
     // graph is the undirected graph G and k is the number in k-vertex cover
-    public static int[] findVertexCover(int adjMatrix[][], int k) {
+    public static ArrayList<Integer> findVertexCover(int adjMatrix[][], int k) {
 
-        int[] vertexCover = new int[k];
+        ArrayList<Integer> vertexCover = new ArrayList<Integer>();
 
-        int count = 0;
-        while (count < k) {
+        for (int[] x : adjMatrix) {
+            for (int y : x) {
+                System.out.print(y + " ");
+            }
+            System.out.println();
+        }
+
+        while (k > 0) {
 
             // find the index with the largest sum
             int numRows = adjMatrix.length;
@@ -27,6 +33,18 @@ class vertexCover {
                 columnTotal[i] = counter;
             }
 
+            int count = 0;
+            System.out.println("k: " + k);
+            for (int i = 0; i < columnTotal.length; i++) {
+                System.out.print(columnTotal[i]);
+                count += columnTotal[i];
+            }
+            System.out.println();
+
+            if (count == 0) {
+                return new ArrayList<Integer>();
+            }
+
             // add index to vertex cover array
             int largest = 0;
             for (int i = 0; i < columnTotal.length; i++) {
@@ -36,7 +54,7 @@ class vertexCover {
             }
 
             // add vertex with most edges to vertex cover
-            vertexCover[count] = largest;
+            vertexCover.add(largest);
 
             // turn subsequent rows to 0
             for (int i = 0; i < numRows; i++) {
@@ -49,9 +67,14 @@ class vertexCover {
             }
 
             // increment count
-            count++;
+            k--;
         }
 
+        for (int i = 0; i < vertexCover.size(); i++) {
+            System.out.print(vertexCover.get(i) + " ");
+        }
+
+        System.out.println("Normal return");
         return vertexCover;
     }
 
@@ -66,49 +89,63 @@ class vertexCover {
             System.out.println("\t(|V|,|E|) (size, ms used) Vertex Cover");
             int counter = 1;
             // scan until there are no more lines
-            while (scan.hasNextInt()) {
-                // n is the number of rows and columns of the adj matrix
-                int n = scan.nextInt();
-                int[][] adjMatrix = new int[n][n];
+            // while (scan.hasNextInt()) {
+            // n is the number of rows and columns of the adj matrix
+            int n = scan.nextInt();
+            int[][] adjMatrix = new int[n][n];
 
-                int edgeCount = 0;
+            int edgeCount = 0;
 
-                // count the edges
-                for (int i = 0; i < n; i++) {
-                    for (int j = 0; j < n; j++) {
-                        // get next int in each line and add to adj matrix
-                        int next = scan.nextInt();
-                        adjMatrix[i][j] = next;
-                        // add value (0 or 1) to the edge count
-                        edgeCount += next;
-                    }
+            // count the edges
+            for (int i = 0; i < n; i++) {
+                for (int j = 0; j < n; j++) {
+                    // get next int in each line and add to adj matrix
+                    int next = scan.nextInt();
+                    adjMatrix[i][j] = next;
+                    // add value (0 or 1) to the edge count
+                    edgeCount += next;
                 }
-                int vertexCount = n;
-                edgeCount = (edgeCount - vertexCount) / 2;
-
-                // set diagonal to 0 for easier processing
-                for (int i = 0; i < adjMatrix.length; i++) {
-                    adjMatrix[i][i] = 0;
-                }
-
-                // how do I calculate k?!
-                int k = 3;
-
-                // time vertexCover operation
-                long startTime = System.nanoTime();
-                int vertexCover[] = findVertexCover(adjMatrix, k);
-                long endTime = System.nanoTime();
-
-                // find time in ms
-                long timeElapsed = (endTime - startTime) / 1000000;
-                System.out.print("G" + counter + " (" + vertexCount + ", " + edgeCount + ")");
-                System.out.print("(size = " + k + " ms = " + timeElapsed + ") {");
-                for (int i = 0; i < vertexCover.length; i++) {
-                    System.out.print(vertexCover[i] + ",");
-                }
-                System.out.print("}\n");
-                counter++;
             }
+            int vertexCount = n;
+            edgeCount = (edgeCount - vertexCount) / 2;
+
+            // set diagonal to 0 for easier processing
+            for (int i = 0; i < adjMatrix.length; i++) {
+                adjMatrix[i][i] = 0;
+            }
+
+            // how do I calculate k?!
+            ArrayList<Integer> vertexCover = new ArrayList<Integer>();
+
+            long startTime = 0;
+            long endTime = 0;
+
+            int k = vertexCount - 1;
+            while (vertexCover.isEmpty() && k > 0) {
+                for (int[] x : adjMatrix) {
+                    for (int y : x) {
+                        System.out.print(y + " ");
+                    }
+                    System.out.println();
+                }
+                // startTime = System.nanoTime();
+                vertexCover = findVertexCover(adjMatrix, k);
+                // endTime = System.nanoTime();
+                k--;
+            }
+
+            // time vertexCover operation
+
+            // find time in ms
+            long timeElapsed = (endTime - startTime) / 1000000;
+            System.out.print("G" + counter + " (" + vertexCount + ", " + edgeCount + ")");
+            System.out.print("(size = " + k + " ms = " + timeElapsed + ") {");
+            for (int i = 0; i < vertexCover.size(); i++) {
+                System.out.print(vertexCover.get(i) + ",");
+            }
+            System.out.print("}\n");
+            counter++;
+            // }
 
             scan.close();
         } else {
