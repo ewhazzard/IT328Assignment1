@@ -17,9 +17,17 @@ public class find3SAT
         }
         int [] shiftedArray = new int[numLiterals + clauseArr.length];
         
-        for(int i = 0; i < k; i+=2){
-            shiftedArray[i] = i;
-            shiftedArray[i+1] = -i;
+        int counter = 1;
+        for(int i = 0; i < k; i++){
+            if(i % 2 == 0)
+            {
+                shiftedArray[i] = counter;
+            }
+            else
+            {
+                shiftedArray[i] = counter * -1;
+                counter++;
+            }
         }
 
         for(int i = k; i < shiftedArray.length; i++ )
@@ -30,45 +38,47 @@ public class find3SAT
         System.out.println(Arrays.toString(shiftedArray));
 
         //connect literals to themsleves
-        // for(int i = 0; i < numLiterals; i+=2)
-        // {
-        //     graph[i][i] = 1;
-        //     graph[i][i + 1] = 1;
-        //     graph[i + 1][i] = 1;
-        //     graph[i + 1][i + 1] = 1;
-        // }
+        for(int i = 0; i < numLiterals; i+=2)
+        {
+            graph[i][i] = 1;
+            graph[i][i + 1] = 1;
+            graph[i + 1][i] = 1;
+            graph[i + 1][i + 1] = 1;
+        }
 
-        // //connect calsues to themselves
-        // for(int offset = k; offset < numNodes; offset += 3)
-        // {
-        //     for(int i = offset; i < (offset + 3); i++)
-        //     {
-        //         for(int j = offset; j < offset + 3; j++)
-        //         {
-        //             graph[i][j] = 1;
-        //         }
-        //     }
-        // }
+        //connect calsues to themselves
+        for(int offset = k; offset < numNodes; offset += 3)
+        {
+            for(int i = offset; i < (offset + 3); i++)
+            {
+                for(int j = offset; j < offset + 3; j++)
+                {
+                    graph[i][j] = 1;
+                }
+            }
+        }
 
-        // //connect clauses to literals
-        // for(int i = 0; i < k; i++)
-        // {
-        //     for(int j = i; j < numNodes; j++)
-        //     {
-        //         if(shiftedArray[i] == shiftedArray[j])
-        //         graph[i][j] = 1;
-        //         graph[j][i] = 1;
-        //     }
-        // }
+        //connect clauses to literals
+        for(int i = 0; i < k; i++)
+        {
+            for(int j = k; j < numNodes; j++)
+            {
+                if(shiftedArray[i] == shiftedArray[j])
+                {
+                    graph[i][j] = 1;
+                    graph[j][i] = 1;
+                }
+            }
+        }
 
-        // for(int i = 0; i < numNodes; i++)
-        // {
-        //     for(int j = 0; j < numNodes; j++)
-        //     {
-        //         System.out.print(graph[i][j] + " \t");
-        //     }
-        //     System.out.println("\n");
-        // }
+        for(int i = 0; i < numNodes; i++)
+        {
+            for(int j = 0; j < numNodes; j++)
+            {
+                System.out.print(graph[i][j] + " \t");
+            }
+            System.out.println("\n");
+        }
 
         return graph;
     }
