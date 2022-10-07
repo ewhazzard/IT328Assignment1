@@ -1,5 +1,6 @@
 import java.beans.IndexedPropertyChangeEvent;
 import java.io.*;
+import java.time.Clock;
 import java.util.*;
 
 class vertexCover {
@@ -9,12 +10,12 @@ class vertexCover {
 
         ArrayList<Integer> vertexCover = new ArrayList<Integer>();
 
-        for (int[] x : adjMatrix) {
-            for (int y : x) {
-                System.out.print(y + " ");
-            }
-            System.out.println();
-        }
+        // for (int[] x : adjMatrix) {
+        // for (int y : x) {
+        // System.out.print(y + " ");
+        // }
+        // System.out.println();
+        // }
 
         while (k > 0) {
 
@@ -34,15 +35,15 @@ class vertexCover {
             }
 
             int count = 0;
-            System.out.println("k: " + k);
+            // System.out.println("k: " + k);
             for (int i = 0; i < columnTotal.length; i++) {
-                System.out.print(columnTotal[i]);
+                // System.out.print(columnTotal[i]);
                 count += columnTotal[i];
             }
-            System.out.println();
+            // System.out.println();
 
             if (count == 0) {
-                return new ArrayList<Integer>();
+                break;
             }
 
             // add index to vertex cover array
@@ -70,11 +71,10 @@ class vertexCover {
             k--;
         }
 
-        for (int i = 0; i < vertexCover.size(); i++) {
-            System.out.print(vertexCover.get(i) + " ");
-        }
+        // for (int i = 0; i < vertexCover.size(); i++) {
+        // System.out.print(vertexCover.get(i) + " ");
+        // }
 
-        System.out.println("Normal return");
         return vertexCover;
     }
 
@@ -89,64 +89,76 @@ class vertexCover {
             System.out.println("\t(|V|,|E|) (size, ms used) Vertex Cover");
             int counter = 1;
             // scan until there are no more lines
-            // while (scan.hasNextInt()) {
-            // n is the number of rows and columns of the adj matrix
-            int n = scan.nextInt();
-            int[][] adjMatrix = new int[n][n];
-
-            int edgeCount = 0;
-
-            // count the edges
-            for (int i = 0; i < n; i++) {
-                for (int j = 0; j < n; j++) {
-                    // get next int in each line and add to adj matrix
-                    int next = scan.nextInt();
-                    adjMatrix[i][j] = next;
-                    // add value (0 or 1) to the edge count
-                    edgeCount += next;
+            while (scan.hasNextInt()) {
+                // n is the number of rows and columns of the adj matrix
+                int n = scan.nextInt();
+                if (n == 0) {
+                    break;
                 }
-            }
-            int vertexCount = n;
-            edgeCount = (edgeCount - vertexCount) / 2;
+                int[][] adjMatrix = new int[n][n];
 
-            // set diagonal to 0 for easier processing
-            for (int i = 0; i < adjMatrix.length; i++) {
-                adjMatrix[i][i] = 0;
-            }
+                int edgeCount = 0;
 
-            // how do I calculate k?!
-            ArrayList<Integer> vertexCover = new ArrayList<Integer>();
-
-            long startTime = 0;
-            long endTime = 0;
-
-            int k = vertexCount - 1;
-            while (vertexCover.isEmpty() && k > 0) {
-                for (int[] x : adjMatrix) {
-                    for (int y : x) {
-                        System.out.print(y + " ");
+                // count the edges
+                for (int i = 0; i < n; i++) {
+                    for (int j = 0; j < n; j++) {
+                        // get next int in each line and add to adj matrix
+                        int next = scan.nextInt();
+                        adjMatrix[i][j] = next;
+                        // add value (0 or 1) to the edge count
+                        edgeCount += next;
                     }
-                    System.out.println();
                 }
-                // startTime = System.nanoTime();
-                vertexCover = findVertexCover(adjMatrix, k);
-                // endTime = System.nanoTime();
-                k--;
+                int vertexCount = n;
+                edgeCount = (edgeCount - vertexCount) / 2;
+
+                // set diagonal to 0 for easier processing
+                for (int i = 0; i < adjMatrix.length; i++) {
+                    adjMatrix[i][i] = 0;
+                }
+
+                // how do I calculate k?!
+                ArrayList<Integer> vertexCover = new ArrayList<Integer>();
+
+                Clock clock = Clock.systemDefaultZone();
+                long startTime = 0;
+                long endTime = 0;
+
+                int k = vertexCount;
+                while (vertexCover.isEmpty() && k > 0) {
+                    // for (int[] x : adjMatrix) {
+                    // for (int y : x) {
+                    // System.out.print(y + " ");
+                    // }
+                    // System.out.println();
+                    // }
+                    startTime = clock.millis();
+                    vertexCover = findVertexCover(adjMatrix, k);
+                    endTime = clock.millis();
+                    k--;
+                }
+
+                k = vertexCover.size();
+                Collections.sort(vertexCover);
+
+                // time vertexCover operation
+
+                // find time in ms
+                long timeElapsed = endTime - startTime;
+                // long timeElapsed = (endTime - startTime) / 1000000;
+                System.out.print("G" + counter + " (" + vertexCount + ", " + edgeCount + ")");
+                System.out.print("(size = " + k + " ms = " + timeElapsed + ") {");
+                String delimiter = ", ";
+                StringJoiner joiner = new StringJoiner(delimiter);
+                vertexCover.forEach(item -> joiner.add(item.toString()));
+                System.out.print(joiner.toString());
+                // for (int i = 0; i < vertexCover.size(); i++) {
+                // System.out.print(vertexCover.get(i) + ",");
+                // }
+                System.out.print("}\n");
+                counter++;
             }
-
-            // time vertexCover operation
-
-            // find time in ms
-            long timeElapsed = (endTime - startTime) / 1000000;
-            System.out.print("G" + counter + " (" + vertexCount + ", " + edgeCount + ")");
-            System.out.print("(size = " + k + " ms = " + timeElapsed + ") {");
-            for (int i = 0; i < vertexCover.size(); i++) {
-                System.out.print(vertexCover.get(i) + ",");
-            }
-            System.out.print("}\n");
-            counter++;
-            // }
-
+            System.out.print("***");
             scan.close();
         } else {
             System.err.println("Invalid argument");
