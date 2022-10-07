@@ -1,16 +1,23 @@
 import java.beans.IndexedPropertyChangeEvent;
 import java.io.*;
+import java.time.Clock;
 import java.util.*;
 
 class vertexCover {
 
     // graph is the undirected graph G and k is the number in k-vertex cover
-    public static int[] findVertexCover(int adjMatrix[][], int k) {
+    public static ArrayList<Integer> findVertexCover(int adjMatrix[][], int k) {
 
-        int[] vertexCover = new int[k];
+        ArrayList<Integer> vertexCover = new ArrayList<Integer>();
 
-        int count = 0;
-        while (count < k) {
+        // for (int[] x : adjMatrix) {
+        // for (int y : x) {
+        // System.out.print(y + " ");
+        // }
+        // System.out.println();
+        // }
+
+        while (k > 0) {
 
             // find the index with the largest sum
             int numRows = adjMatrix.length;
@@ -27,6 +34,18 @@ class vertexCover {
                 columnTotal[i] = counter;
             }
 
+            int count = 0;
+            // System.out.println("k: " + k);
+            for (int i = 0; i < columnTotal.length; i++) {
+                // System.out.print(columnTotal[i]);
+                count += columnTotal[i];
+            }
+            // System.out.println();
+
+            if (count == 0) {
+                break;
+            }
+
             // add index to vertex cover array
             int largest = 0;
             for (int i = 0; i < columnTotal.length; i++) {
@@ -36,7 +55,7 @@ class vertexCover {
             }
 
             // add vertex with most edges to vertex cover
-            vertexCover[count] = largest;
+            vertexCover.add(largest);
 
             // turn subsequent rows to 0
             for (int i = 0; i < numRows; i++) {
@@ -49,8 +68,12 @@ class vertexCover {
             }
 
             // increment count
-            count++;
+            k--;
         }
+
+        // for (int i = 0; i < vertexCover.size(); i++) {
+        // System.out.print(vertexCover.get(i) + " ");
+        // }
 
         return vertexCover;
     }
@@ -69,6 +92,9 @@ class vertexCover {
             while (scan.hasNextInt()) {
                 // n is the number of rows and columns of the adj matrix
                 int n = scan.nextInt();
+                if (n == 0) {
+                    break;
+                }
                 int[][] adjMatrix = new int[n][n];
 
                 int edgeCount = 0;
@@ -92,24 +118,47 @@ class vertexCover {
                 }
 
                 // how do I calculate k?!
-                int k = 3;
+                ArrayList<Integer> vertexCover = new ArrayList<Integer>();
+
+                Clock clock = Clock.systemDefaultZone();
+                long startTime = 0;
+                long endTime = 0;
+
+                int k = vertexCount;
+                while (vertexCover.isEmpty() && k > 0) {
+                    // for (int[] x : adjMatrix) {
+                    // for (int y : x) {
+                    // System.out.print(y + " ");
+                    // }
+                    // System.out.println();
+                    // }
+                    startTime = clock.millis();
+                    vertexCover = findVertexCover(adjMatrix, k);
+                    endTime = clock.millis();
+                    k--;
+                }
+
+                k = vertexCover.size();
+                Collections.sort(vertexCover);
 
                 // time vertexCover operation
-                long startTime = System.nanoTime();
-                int vertexCover[] = findVertexCover(adjMatrix, k);
-                long endTime = System.nanoTime();
 
                 // find time in ms
-                long timeElapsed = (endTime - startTime) / 1000000;
+                long timeElapsed = endTime - startTime;
+                // long timeElapsed = (endTime - startTime) / 1000000;
                 System.out.print("G" + counter + " (" + vertexCount + ", " + edgeCount + ")");
                 System.out.print("(size = " + k + " ms = " + timeElapsed + ") {");
-                for (int i = 0; i < vertexCover.length; i++) {
-                    System.out.print(vertexCover[i] + ",");
-                }
+                String delimiter = ", ";
+                StringJoiner joiner = new StringJoiner(delimiter);
+                vertexCover.forEach(item -> joiner.add(item.toString()));
+                System.out.print(joiner.toString());
+                // for (int i = 0; i < vertexCover.size(); i++) {
+                // System.out.print(vertexCover.get(i) + ",");
+                // }
                 System.out.print("}\n");
                 counter++;
             }
-
+            System.out.print("***");
             scan.close();
         } else {
             System.err.println("Invalid argument");
