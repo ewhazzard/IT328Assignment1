@@ -7,75 +7,76 @@ class vertexCover {
 
     // graph is the undirected graph G and k is the number in k-vertex cover
     public static ArrayList<Integer> findVertexCover(int adjMatrix[][], int k) {
-
         ArrayList<Integer> vertexCover = new ArrayList<Integer>();
+        int numVertices = adjMatrix.length;
 
-        // for (int[] x : adjMatrix) {
-        // for (int y : x) {
-        // System.out.print(y + " ");
-        // }
-        // System.out.println();
-        // }
+        boolean[] cover = new boolean[numVertices];
 
-        while (k > 0) {
-
-            // find the index with the largest sum
-            int numRows = adjMatrix.length;
-            int numColumns = numRows;
-
-            // store column sums
-            int columnTotal[] = new int[numRows];
-
-            for (int i = 0; i < numRows; i++) {
-                int counter = 0;
-                for (int j = 0; j < numColumns; j++) {
-                    counter += adjMatrix[i][j];
-                }
-                columnTotal[i] = counter;
-            }
-
-            int count = 0;
-            // System.out.println("k: " + k);
-            for (int i = 0; i < columnTotal.length; i++) {
-                // System.out.print(columnTotal[i]);
-                count += columnTotal[i];
-            }
-            // System.out.println();
-
-            if (count == 0) {
-                break;
-            }
-
-            // add index to vertex cover array
-            int largest = 0;
-            for (int i = 0; i < columnTotal.length; i++) {
-                if (columnTotal[i] > columnTotal[largest]) {
-                    largest = i;
-                }
-            }
-
-            // add vertex with most edges to vertex cover
-            vertexCover.add(largest);
-
-            // turn subsequent rows to 0
-            for (int i = 0; i < numRows; i++) {
-                adjMatrix[largest][i] = 0;
-            }
-
-            // turn subsequent columns to 0
-            for (int i = 0; i < numColumns; i++) {
-                adjMatrix[i][largest] = 0;
-            }
-
-            // increment count
-            k--;
+        // initialize boolean cover to be all true
+        for (int i = 0; i < cover.length; i++) {
+            cover[i] = false;
         }
 
-        // for (int i = 0; i < vertexCover.size(); i++) {
-        // System.out.print(vertexCover.get(i) + " ");
-        // }
+        // store column sums as # edges
+        int edgeCount[] = new int[numVertices];
+
+        for (int i = 0; i < numVertices; i++) {
+            int counter = 0;
+            for (int j = 0; j < numVertices; j++) {
+                counter += adjMatrix[i][j];
+            }
+            edgeCount[i] = counter;
+        }
+
+        // array list storing vertices in order from least # edges to greatest # edges
+        ArrayList<Integer> sortedVertices = new ArrayList<Integer>();
+
+        // populate sortedVertices by continuing to find smallest element
+        while (sortedVertices.size() != numVertices) {
+            int smallest = 0;
+            for (int i = 0; i < edgeCount.length; i++) {
+                if (edgeCount[i] < edgeCount[smallest]) {
+                    smallest = i;
+                }
+            }
+            sortedVertices.add(smallest);
+        }
+
+        int count = 0;
+        // while we don't have a vertex cover, try removing vertices
+        while (!isVertexCover(cover, k)) {
+            int current = sortedVertices.get(count);
+            // remove current element from cover
+            cover[current] = false;
+
+            // check edges (i,j) in adjMatrix where j = current. if cover[i] = false, you
+            // can't remove. change cover[current] back to true, increment count and
+            // continue
+
+            // else if cover[i] = true, continue and increment count
+
+        }
 
         return vertexCover;
+
+    }
+
+    // determine if # of true vertices = k. If so, is vertex cover
+    public static boolean isVertexCover(boolean[] cover, int k) {
+        int count = 0;
+        // get # of true values
+        for (int i = 0; i < cover.length; i++) {
+            if (cover[i] == true) {
+                count++;
+            }
+        }
+
+        // if # true values is k, there is a vertex cover
+        if (count == k) {
+            return true;
+        }
+
+        return false;
     }
 
     public static void main(String args[]) throws FileNotFoundException {
@@ -120,11 +121,9 @@ class vertexCover {
                 // how do I calculate k?!
                 ArrayList<Integer> vertexCover = new ArrayList<Integer>();
 
-                Clock clock = Clock.systemDefaultZone();
+                int k = vertexCount;
                 long startTime = 0;
                 long endTime = 0;
-
-                int k = vertexCount;
                 while (vertexCover.isEmpty() && k > 0) {
                     // for (int[] x : adjMatrix) {
                     // for (int y : x) {
@@ -132,9 +131,11 @@ class vertexCover {
                     // }
                     // System.out.println();
                     // }
-                    startTime = clock.millis();
-                    vertexCover = findVertexCover(adjMatrix, k);
-                    endTime = clock.millis();
+                    startTime = System.nanoTime();
+                    if (counter == 4) {
+                        vertexCover = findVertexCover(adjMatrix, 6);
+                    }
+                    endTime = System.nanoTime();
                     k--;
                 }
 
@@ -144,7 +145,8 @@ class vertexCover {
                 // time vertexCover operation
 
                 // find time in ms
-                long timeElapsed = endTime - startTime;
+
+                long timeElapsed = (endTime - startTime) / 1000000;
                 // long timeElapsed = (endTime - startTime) / 1000000;
                 System.out.print("G" + counter + " (" + vertexCount + ", " + edgeCount + ")");
                 System.out.print("(size = " + k + " ms = " + timeElapsed + ") {");
