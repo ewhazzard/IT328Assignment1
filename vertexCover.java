@@ -12,9 +12,9 @@ class vertexCover {
 
         boolean[] cover = new boolean[numVertices];
 
-        // initialize boolean cover to be all true
+        // initialize boolean cover
         for (int i = 0; i < cover.length; i++) {
-            cover[i] = false;
+            cover[i] = true;
         }
 
         // store column sums as # edges
@@ -28,23 +28,46 @@ class vertexCover {
             edgeCount[i] = counter;
         }
 
+        // for (int i = 0; i < edgeCount.length; i++) {
+        // System.out.println(edgeCount[i]);
+        // }
+
         // array list storing vertices in order from least # edges to greatest # edges
         ArrayList<Integer> sortedVertices = new ArrayList<Integer>();
 
         // populate sortedVertices by continuing to find smallest element
         while (sortedVertices.size() != numVertices) {
-            int smallest = 0;
+            int largest = 0;
             for (int i = 0; i < edgeCount.length; i++) {
-                if (edgeCount[i] < edgeCount[smallest]) {
-                    smallest = i;
+                if (edgeCount[i] > edgeCount[largest]) {
+                    largest = i;
                 }
             }
-            sortedVertices.add(smallest);
+            sortedVertices.add(largest);
+            edgeCount[largest] = 0;
         }
+
+        Collections.reverse(sortedVertices);
+
+        // int[] tempEdgeCount = new int[edgeCount.length];
+        // int countTemp = 0;
+        // for (int i = edgeCount.length - 1; i <= 0; i--) {
+        // tempEdgeCount[countTemp] = edgeCount[i];
+        // countTemp++;
+        // }
+
+        // edgeCount = tempEdgeCount;
+        // for (int i = 0; i < edgeCount.length; i++) {
+        // System.out.print(edgeCount[i]);
+        // }
+
+        // for (int i = 0; i < sortedVertices.size(); i++) {
+        // System.out.println(sortedVertices.get(i));
+        // }
 
         int count = 0;
         // while we don't have a vertex cover, try removing vertices
-        while (!isVertexCover(cover, k)) {
+        while (!isVertexCover(cover, k) && count < sortedVertices.size()) {
             int current = sortedVertices.get(count);
             // remove current element from cover
             cover[current] = false;
@@ -52,11 +75,28 @@ class vertexCover {
             // check edges (i,j) in adjMatrix where j = current. if cover[i] = false, you
             // can't remove. change cover[current] back to true, increment count and
             // continue
-
-            // else if cover[i] = true, continue and increment count
+            for (int i = 0; i < adjMatrix.length; i++) {
+                if (adjMatrix[i][current] == 1 && cover[i] == false) {
+                    cover[current] = true;
+                    break;
+                }
+            }
+            count++;
 
         }
 
+        // for (int i = 0; i < cover.length; i++) {
+        // System.out.print(cover[i]);
+        // }
+
+        boolean coverStatus = isVertexCover(cover, k);
+        if (coverStatus) {
+            for (int i = 0; i < cover.length; i++) {
+                if (cover[i] == true) {
+                    vertexCover.add(i);
+                }
+            }
+        }
         return vertexCover;
 
     }
@@ -120,11 +160,17 @@ class vertexCover {
 
                 // how do I calculate k?!
                 ArrayList<Integer> vertexCover = new ArrayList<Integer>();
+                ArrayList<Integer> priorCover = new ArrayList<Integer>();
 
                 int k = vertexCount;
                 long startTime = 0;
                 long endTime = 0;
-                while (vertexCover.isEmpty() && k > 0) {
+
+                // startTime = System.nanoTime();
+                // vertexCover = findVertexCover(adjMatrix, 3);
+                // endTime = System.nanoTime();
+                vertexCover = findVertexCover(adjMatrix, k);
+                while (!vertexCover.isEmpty() && k > 0) {
                     // for (int[] x : adjMatrix) {
                     // for (int y : x) {
                     // System.out.print(y + " ");
@@ -132,12 +178,13 @@ class vertexCover {
                     // System.out.println();
                     // }
                     startTime = System.nanoTime();
-                    if (counter == 4) {
-                        vertexCover = findVertexCover(adjMatrix, 6);
-                    }
+                    priorCover = vertexCover;
+                    vertexCover = findVertexCover(adjMatrix, k);
                     endTime = System.nanoTime();
                     k--;
                 }
+
+                vertexCover = priorCover;
 
                 k = vertexCover.size();
                 Collections.sort(vertexCover);
