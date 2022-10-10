@@ -1,3 +1,9 @@
+
+/**
+ * Program 1 - IT 328
+ * 10/9/2022
+ * Authors: Audra Heistand (aeheis1), Matt Tobeck (mtobec1), and Evan Hazzard (ewhazza)
+ */
 import java.io.*;
 import java.util.*;
 
