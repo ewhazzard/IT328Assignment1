@@ -40,14 +40,26 @@ class findVCover {
         int numBackTracks = 0;
         int numShuffle = 0;
         // while we don't have a vertex cover, try removing vertices
+        // if you checked all the vertices in one order, take front and move to back.
+        // check again
+        // if this still doesn't work, get a new random ordering of vertices and repeat
+        // above process
         while (!isVertexCover(cover, k) && count < sortedVertices.size() && numShuffle < 100) {
+            // if you have backtracked through the entire list, get new random list ordering
+            // and do the process again
             if (numBackTracks == sortedVertices.size() - 1) {
+                // get list in random order
                 Collections.shuffle(sortedVertices);
                 numBackTracks = 0;
                 numShuffle++;
+                // if a min vertex cover starting at index 0 and continuing to n can't be found,
+                // reorder list by putting index 0 element at back until you use all options
             } else if ((count == sortedVertices.size() - 1) && (numBackTracks < sortedVertices.size())) {
+                // remove index 0
                 int first = sortedVertices.remove(0);
+                // put index 0 element at back of list
                 sortedVertices.add(first);
+                // reset cover list (since starting over)
                 for (int i = 0; i < cover.length; i++) {
                     cover[i] = true;
                 }
