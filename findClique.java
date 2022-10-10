@@ -5,7 +5,6 @@
  * Authors: Audra Heistand (aeheis1), Matt Tobeck (mtobec1), and Evan Hazzard (ewhazza)
  */
 import java.io.*;
-import java.lang.module.FindException;
 import java.util.*;
 
 public class findClique {
@@ -84,7 +83,7 @@ public class findClique {
                 }
                 int vertexCount = n;
                 edgeCount = (edgeCount - vertexCount) / 2;
-                
+
                 constructClique(adjMatrix, vertexCount, edgeCount, counter);
             }
             scan.close();
