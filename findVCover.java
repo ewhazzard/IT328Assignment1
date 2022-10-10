@@ -59,8 +59,26 @@ class findVCover {
         Collections.reverse(sortedVertices);
 
         int count = 0;
+        int numBackTracks = 1;
         // while we don't have a vertex cover, try removing vertices
         while (!isVertexCover(cover, k) && count < sortedVertices.size()) {
+            // if ((count == sortedVertices.size() - 1) && (numBackTracks <
+            // sortedVertices.size() - 1)) {
+            // count = numBackTracks;
+            // numBackTracks++;
+            // for (int i = 0; i < cover.length; i++) {
+            // cover[i] = true;
+            // }
+            // }
+            if ((count == sortedVertices.size() - 1) && (numBackTracks < sortedVertices.size())) {
+                int first = sortedVertices.remove(0);
+                sortedVertices.add(first);
+                for (int i = 0; i < cover.length; i++) {
+                    cover[i] = true;
+                }
+                count = 0;
+                numBackTracks++;
+            }
             int current = sortedVertices.get(count);
             // remove current element from cover
             cover[current] = false;
@@ -87,13 +105,15 @@ class findVCover {
                     vertexCover.add(i);
                 }
             }
+        } else {
+            // try again
         }
         return vertexCover;
 
     }
 
     // determine if # of true vertices = k. If so, is vertex cover
-    public static boolean isVertexCover(boolean[] cover, int k) {
+    private static boolean isVertexCover(boolean[] cover, int k) {
         int count = 0;
         // get # of true values
         for (int i = 0; i < cover.length; i++) {
