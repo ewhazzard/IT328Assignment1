@@ -1,3 +1,4 @@
+package npcproblems;
 
 /**
  * Program 1 - IT 328
@@ -9,7 +10,7 @@ import java.io.*;
 import java.time.Clock;
 import java.util.*;
 
-class findVCover {
+public class findVCover {
 
     // graph is the undirected graph G and k is the number in k-vertex cover
     public static ArrayList<Integer> findVertexCover(int adjMatrix[][], int k) {

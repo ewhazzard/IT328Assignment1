@@ -1,3 +1,4 @@
+package npcproblems;
 
 /**
  * Program 1 - IT 328

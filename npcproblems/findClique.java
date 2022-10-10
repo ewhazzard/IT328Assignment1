@@ -1,3 +1,4 @@
+package npcproblems;
 
 /**
  * Program 1 - IT 328
@@ -29,9 +30,9 @@ public class findClique {
         clique = priorClique;
         k = clique.size();
         Collections.sort(clique);
-
+        // Measure the time elapsed for finding the clique of each graph
         long timeElapsed = (endTime - startTime) / 1000000;
-        // long timeElapsed = (endTime - startTime) / 1000000;
+        // Print out results
         System.out.print("G" + counter + " (" + vertexCount + ", " + edgeCount + ")");
         System.out.print("(size = " + k + " ms = " + timeElapsed + ") {");
         String delimiter = ", ";
@@ -91,9 +92,6 @@ public class findClique {
                 constructClique(adjMatrix, vertexCount, edgeCount, counter);
                 scan.close();
             }
-        
-
-
         }
     }
 }
