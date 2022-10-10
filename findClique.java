@@ -5,6 +5,7 @@
  * Authors: Audra Heistand (aeheis1), Matt Tobeck (mtobec1), and Evan Hazzard (ewhazza)
  */
 import java.io.*;
+import java.lang.module.FindException;
 import java.util.*;
 
 public class findClique {
@@ -31,7 +32,6 @@ public class findClique {
         Collections.sort(clique);
 
         long timeElapsed = (endTime - startTime) / 1000000;
-        // long timeElapsed = (endTime - startTime) / 1000000;
         System.out.print("G" + counter + " (" + vertexCount + ", " + edgeCount + ")");
         System.out.print("(size = " + k + " ms = " + timeElapsed + ") {");
         String delimiter = ", ";
@@ -54,6 +54,8 @@ public class findClique {
             
             // Count 
             int counter = 0;
+            System.out.println("* Max Cliques in graphs in graphs2022.txt (reduced to K-Vertex Cover) *");
+            System.out.println("\t(|V|,|E|) (size, ms used) Vertex Cover");
             while (scan.hasNextInt()) {
                 counter++;
                 // n is the number of rows and columns of the adj matrix
@@ -78,22 +80,14 @@ public class findClique {
                         else {
                             adjMatrix[i][j] = 0;
                         }
-                        // add value (0 or 1) to the edge count
-                        
                     }
                 }
                 int vertexCount = n;
                 edgeCount = (edgeCount - vertexCount) / 2;
-
-                // Start printing to console
-                System.out.println("* Max Cliques in graphs in graphs2022.txt (reduced to K-Vertex Cover) *");
-                System.out.println("\t(|V|,|E|) (size, ms used) Vertex Cover");
+                
                 constructClique(adjMatrix, vertexCount, edgeCount, counter);
-                scan.close();
             }
-        
-
-
+            scan.close();
         }
     }
 }
