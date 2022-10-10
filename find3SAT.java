@@ -49,7 +49,7 @@ public class find3SAT {
             indexArray[i] = cnfArray[i - numLiterals];
         }
 
-        System.out.println(Arrays.toString(indexArray));
+        // System.out.println(Arrays.toString(indexArray));
 
         // connect literals to themsleves
         for (int i = 0; i < numLiterals; i += 2) {
@@ -85,12 +85,12 @@ public class find3SAT {
             }
         }
 
-        for (int i = 0; i < numNodes; i++) {
-            for (int j = 0; j < numNodes; j++) {
-                System.out.print(graph[i][j] + " \t");
-            }
-            System.out.println("\n");
-        }
+        // for (int i = 0; i < numNodes; i++) {
+        //     for (int j = 0; j < numNodes; j++) {
+        //         System.out.print(graph[i][j] + " \t");
+        //     }
+        //     System.out.println("\n");
+        // }
         // returns a grpah of the CNF represented via an adjacency matrix
         return graph;
     }
@@ -138,6 +138,32 @@ public class find3SAT {
                 long elapsedTime = (endTime - startTime) / 1000000;
                 System.out.println("3CNF No. " + lineCount + ": [n=" + maxValue + " k = " + dimension + "] ("
                         + elapsedTime + " ms) Solution: ");
+
+                findVCover findCover = new findVCover();
+
+                ArrayList<Integer> vertexCover = findCover.findVertexCover(graph, dimension);
+                ArrayList<Integer> priorCover = new ArrayList<Integer>();
+
+                while (!(graph.length != 0) && dimension > 0) {
+                    startTime = System.nanoTime();
+                    priorCover = vertexCover;
+                    vertexCover = findCover.findVertexCover(graph, dimension);
+                    endTime = System.nanoTime();
+                    dimension--;
+                }
+                vertexCover = priorCover;
+
+                int k = vertexCover.size();
+                Collections.sort(vertexCover);
+
+                long timeElapsed = (endTime - startTime) / 1000000;
+                // System.out.print("G" + counter + " (" + vertexCount + ", " + edgeCount + ")");
+                System.out.print("(size = " + k + " ms = " + timeElapsed + ") {");
+                String delimiter = ", ";
+                StringJoiner joiner = new StringJoiner(delimiter);
+                vertexCover.forEach(item -> joiner.add(item.toString()));
+                System.out.print(joiner.toString());
+                System.out.print("}\n");
             }
 
             scan.close();
