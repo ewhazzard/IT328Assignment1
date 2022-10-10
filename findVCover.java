@@ -29,48 +29,23 @@ class findVCover {
             cover[i] = true;
         }
 
-        // store column sums as # edges
-        int edgeCount[] = new int[numVertices];
-
-        for (int i = 0; i < numVertices; i++) {
-            int counter = 0;
-            for (int j = 0; j < numVertices; j++) {
-                counter += adjMatrix[i][j];
-            }
-            edgeCount[i] = counter;
-        }
-
         // array list storing vertices in order from least # edges to greatest # edges
         ArrayList<Integer> sortedVertices = new ArrayList<Integer>();
 
-        // populate sortedVertices by continuing to find smallest element
-        while (sortedVertices.size() != numVertices) {
-            int largest = 0;
-            for (int i = 0; i < edgeCount.length; i++) {
-                if (edgeCount[i] > edgeCount[largest]) {
-                    largest = i;
-                }
-            }
-            sortedVertices.add(largest);
-            edgeCount[largest] = 0;
+        for (int i = 0; i < adjMatrix.length; i++) {
+            sortedVertices.add(i);
         }
 
-        // sort list from least number of edges to most
-        Collections.reverse(sortedVertices);
-
         int count = 0;
-        int numBackTracks = 1;
+        int numBackTracks = 0;
+        int numShuffle = 0;
         // while we don't have a vertex cover, try removing vertices
-        while (!isVertexCover(cover, k) && count < sortedVertices.size()) {
-            // if ((count == sortedVertices.size() - 1) && (numBackTracks <
-            // sortedVertices.size() - 1)) {
-            // count = numBackTracks;
-            // numBackTracks++;
-            // for (int i = 0; i < cover.length; i++) {
-            // cover[i] = true;
-            // }
-            // }
-            if ((count == sortedVertices.size() - 1) && (numBackTracks < sortedVertices.size())) {
+        while (!isVertexCover(cover, k) && count < sortedVertices.size() && numShuffle < 100) {
+            if (numBackTracks == sortedVertices.size() - 1) {
+                Collections.shuffle(sortedVertices);
+                numBackTracks = 0;
+                numShuffle++;
+            } else if ((count == sortedVertices.size() - 1) && (numBackTracks < sortedVertices.size())) {
                 int first = sortedVertices.remove(0);
                 sortedVertices.add(first);
                 for (int i = 0; i < cover.length; i++) {
