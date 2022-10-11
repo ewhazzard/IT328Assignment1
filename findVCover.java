@@ -12,6 +12,7 @@ import java.util.*;
 class findVCover {
 
     // graph is the undirected graph G and k is the number in k-vertex cover
+    // find k-vertex cover
     public static ArrayList<Integer> findVertexCover(int adjMatrix[][], int k) {
 
         // set diagonal to 0 for easier processing
@@ -39,12 +40,19 @@ class findVCover {
         int count = 0;
         int numBackTracks = 0;
         int numShuffle = 0;
+
+        // n can be adjusted to accomodate larger graphs. In this case, 100 is big
+        // enough that the probability of finding the optimal solution is
+        // high enough to produce it every time without slowing down the system
+        // substantially
+        int n = 100;
+
         // while we don't have a vertex cover, try removing vertices
         // if you checked all the vertices in one order, take front and move to back.
         // check again
         // if this still doesn't work, get a new random ordering of vertices and repeat
         // above process
-        while (!isVertexCover(cover, k) && count < sortedVertices.size() && numShuffle < 100) {
+        while (!isVertexCover(cover, k) && count < sortedVertices.size() && numShuffle < n) {
             // if you have backtracked through the entire list, get new random list ordering
             // and do the process again
             if (numBackTracks == sortedVertices.size() - 1) {
@@ -99,7 +107,7 @@ class findVCover {
 
     }
 
-    // determine if # of true vertices = k. If so, is vertex cover
+    // determine if # of true vertices = k. If so, is there is a vertex cover
     private static boolean isVertexCover(boolean[] cover, int k) {
         int count = 0;
         // get # of true values
@@ -131,6 +139,7 @@ class findVCover {
             while (scan.hasNextInt()) {
                 // n is the number of rows and columns of the adj matrix
                 int n = scan.nextInt();
+                // prevent further lines from being read if there are no more vertices
                 if (n == 0) {
                     break;
                 }
@@ -177,7 +186,7 @@ class findVCover {
                 long timeElapsed = (endTime - startTime) / 1000000;
                 System.out.print("G" + counter + " (" + vertexCount + ", " + edgeCount + ")");
                 System.out.print("(size = " + k + " ms = " + timeElapsed + ") {");
-                String delimiter = ", ";
+                String delimiter = ",";
                 StringJoiner joiner = new StringJoiner(delimiter);
                 vertexCover.forEach(item -> joiner.add(item.toString()));
                 System.out.print(joiner.toString());
