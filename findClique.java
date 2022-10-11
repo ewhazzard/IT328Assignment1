@@ -18,7 +18,7 @@ public class findClique {
         ArrayList<Integer> clique = findVCover.findVertexCover(adjMatrix, k);
         ArrayList<Integer> priorClique = new ArrayList<Integer>();
 
-        while(clique.isEmpty() && k > 0){
+        while((!clique.isEmpty()) && k > 0){
             startTime = System.nanoTime();
             priorClique = clique;
             clique = findVCover.findVertexCover(adjMatrix, k);
@@ -45,8 +45,6 @@ public class findClique {
         if (args.length > 0) {
             // Read in the file that findVCover stored
             File file = new File(args[0]);
-            //Read in argument to find n clique
-            // int cliqueCount = Integer.parseInt(args[1]);
 
             Scanner scan = new Scanner(file);
             scan.useDelimiter("[\\s,]+");
@@ -83,7 +81,6 @@ public class findClique {
                 }
                 int vertexCount = n;
                 edgeCount = (edgeCount - vertexCount) / 2;
-
                 constructClique(adjMatrix, vertexCount, edgeCount, counter);
             }
             scan.close();
