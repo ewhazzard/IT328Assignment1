@@ -15,41 +15,13 @@ public class find3SAT {
      * the number of literals ( |highest number in CNF| * 2),
      * and the number of nodes (number of literals + length of the CNF)
      */
-    public static int[][] fillGraph(int[][] graph, int[] cnfArray, int numLiterals, int numNodes) {
+    public static int[][] fillGraph(int[][] graph, int[] cnfArray, int [] indexArray, int numLiterals, int numNodes) {
         // initialize graph to have zeroes
         for (int i = 0; i < numNodes; i++) {
             for (int j = i; j < numNodes; j++) {
                 graph[i][j] = 0;
             }
         }
-        /*
-         * the first numLiterals spots in this array contian the literals and their
-         * negations of the CNF
-         * the rmeinaing indices will be populated by the CNF itslef as read from the
-         * file
-         * the array indices of the literals will match their indices in the matrix
-         */
-        int[] indexArray = new int[numLiterals + cnfArray.length];
-
-        int counter = 1;
-        for (int i = 0; i < numLiterals; i++)// place literals in index_array
-        {
-            if (i % 2 == 0) // fill literal
-            {
-                indexArray[i] = counter;
-            } else // fill negation of literal
-            {
-                indexArray[i] = counter * -1;
-                counter++;
-            }
-        }
-
-        for (int i = numLiterals; i < indexArray.length; i++) // add clause to the end of the index array
-        {
-            indexArray[i] = cnfArray[i - numLiterals];
-        }
-
-        // System.out.println(Arrays.toString(indexArray));
 
         // connect literals to themsleves
         for (int i = 0; i < numLiterals; i += 2) {
@@ -95,6 +67,38 @@ public class find3SAT {
         return graph;
     }
 
+    public static int[] createIndexArray(int[] cnfArray, int numLiterals)
+    {
+                /*
+         * the first numLiterals spots in this array contian the literals and their
+         * negations of the CNF
+         * the rmeinaing indices will be populated by the CNF itslef as read from the
+         * file
+         * the array indices of the literals will match their indices in the matrix
+         */
+        int[] indexArray = new int[numLiterals + cnfArray.length];
+
+        int counter = 1;
+        for (int i = 0; i < numLiterals; i++)// place literals in indexArray
+        {
+            if (i % 2 == 0) // fill literal
+            {
+                indexArray[i] = counter;
+            } else // fill negation of literal
+            {
+                indexArray[i] = counter * -1;
+                counter++;
+            }
+        }
+
+        for (int i = numLiterals; i < indexArray.length; i++) // add clause to the end of the index array
+        {
+            indexArray[i] = cnfArray[i - numLiterals];
+        }
+
+        return indexArray;
+    }
+
     // takes a line read from the file and stores each integer in an index of an
     // array
     public static int[] lineIntoArray(String input) {
@@ -126,44 +130,89 @@ public class find3SAT {
             System.out.println("* Solve 3CNF in cnfs2022.txt: (reduced to K-Vertex Cover) *");
             System.out.println("X means either T or F");
             int lineCount = 0;
-            while (scan.hasNextLine()) {
+            while (scan.hasNextLine())
+            {
                 lineCount++;
                 int[] cnfArray = lineIntoArray(scan.nextLine());
                 int maxValue = findMaxLiteral(cnfArray);
+                int [] indexArray = createIndexArray(cnfArray, (maxValue * 2));
                 int dimension = (maxValue * 2) + cnfArray.length; // number of rows and columns for the matrix
                 int[][] graph = new int[dimension][dimension];
                 long startTime = System.nanoTime();
-                graph = fillGraph(graph, cnfArray, (maxValue * 2), dimension);
-                long endTime = System.nanoTime();
-                long elapsedTime = (endTime - startTime) / 1000000;
-                System.out.println("3CNF No. " + lineCount + ": [n=" + maxValue + " k = " + dimension + "] ("
-                        + elapsedTime + " ms) Solution: ");
+                graph = fillGraph(graph, cnfArray, indexArray, (maxValue * 2), dimension);
 
                 findVCover findCover = new findVCover();
 
-                ArrayList<Integer> vertexCover = findCover.findVertexCover(graph, dimension);
+                ArrayList<Integer> vertexCover = new ArrayList<Integer>();
                 ArrayList<Integer> priorCover = new ArrayList<Integer>();
 
-                while (!(graph.length != 0) && dimension > 0) {
-                    startTime = System.nanoTime();
+                vertexCover = findCover.findVertexCover(graph, dimension);
+
+                int k = dimension;
+
+                while (!vertexCover.isEmpty() && k > 0) {
                     priorCover = vertexCover;
-                    vertexCover = findCover.findVertexCover(graph, dimension);
-                    endTime = System.nanoTime();
-                    dimension--;
+                    vertexCover = findCover.findVertexCover(graph, k);
+                    k--;
                 }
+                long endTime = System.nanoTime();
                 vertexCover = priorCover;
 
-                int k = vertexCover.size();
+                k = vertexCover.size();
                 Collections.sort(vertexCover);
 
-                long timeElapsed = (endTime - startTime) / 1000000;
-                // System.out.print("G" + counter + " (" + vertexCount + ", " + edgeCount + ")");
-                System.out.print("(size = " + k + " ms = " + timeElapsed + ") {");
-                String delimiter = ", ";
-                StringJoiner joiner = new StringJoiner(delimiter);
-                vertexCover.forEach(item -> joiner.add(item.toString()));
-                System.out.print(joiner.toString());
-                System.out.print("}\n");
+                long elapsedTime = (endTime - startTime) / 1000000;
+                System.out.print("3CNF No. " + lineCount + ": [n=" + maxValue + " k = " + (cnfArray.length/3) + "] ("
+                        + elapsedTime + " ms) ");
+
+                // System.out.print("\nVertex Cover: [");
+                // String delimiter = ", ";
+                // StringJoiner joiner = new StringJoiner(delimiter);
+                // vertexCover.forEach(item -> joiner.add(item.toString()));
+                // System.out.print(joiner.toString());
+                // System.out.print("]\n");
+
+                // System.out.println("Index Array: " + Arrays.toString(indexArray));
+
+                boolean satisfiable = false;
+
+                for(int i = 0; i < vertexCover.size() && vertexCover.get(i) < (maxValue * 2); i++)
+                {
+                    
+                }
+                
+                if(satisfiable)
+                {
+                    System.out.print("Solution: [ ");
+                    int i = 0;
+                    while(i < vertexCover.size() && vertexCover.get(i) < (maxValue * 2))
+                    {
+                        
+                        if(indexArray[vertexCover.get(i)] > 0)
+                        {
+                            System.out.print(indexArray[vertexCover.get(i)] + " : T ");
+                        }
+                        else
+                        {
+                            System.out.print(Math.abs(indexArray[vertexCover.get(i)]) + " : F ");
+                        }
+                        i++;
+                    }
+                    System.out.println("]");
+                }
+                else{
+                    System.out.println("No Solution!\tRandom: [");
+
+                    System.out.println("]");
+                }
+
+                int cnfLength = cnfArray.length;
+
+                for(int i = 0; i < (cnfLength - 3); i+=3)
+                {
+                    System.out.print("( " + cnfArray[i] + "|" + cnfArray[i+1] + "|" + cnfArray[i+2] + " )^");
+                }
+                System.out.println("( " + cnfArray[cnfLength- 3] + "|" + cnfArray[cnfLength - 2] + "|" + cnfArray[cnfLength - 1] + " ) ==>\n");
             }
 
             scan.close();
