@@ -89,6 +89,7 @@ public class findClique {
                 edgeCount = (edgeCount - vertexCount) / 2;
                 constructClique(adjMatrix, vertexCount, edgeCount, counter);
             }
+            System.out.print("***");
             scan.close();
         }
         else {
