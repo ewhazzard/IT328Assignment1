@@ -91,5 +91,9 @@ public class findClique {
             }
             scan.close();
         }
+        else {
+            System.err.println("Invalid argument");
+            System.exit(0);
+        }
     }
 }
