@@ -10,15 +10,17 @@ import java.util.*;
 public class findClique {
    
     // Given the compliment of a graph, call findVCover and return the vertex cover
-    public static void constructClique(int adjMatrix[][], int vertexCount, int edgeCount, int counter) {
+    public static void constructClique(int[][] adjMatrix, int vertexCount, int edgeCount, int counter) {
+        // Start k at the number of vertices, the maximum clique
         int k = vertexCount;
+        // Initialize timing variables
         long startTime = 0;
         long endTime = 0;
-
+        // Initialize clique variables to find min clique
         ArrayList<Integer> clique = findVCover.findVertexCover(adjMatrix, k);
         ArrayList<Integer> priorClique = new ArrayList<Integer>();
-
-        while((!clique.isEmpty()) && k > 0){
+        // While the clique is not empty, decrease k, find a VCover of size k for adjMatrix and save it to clique. Once we break this loop we will go back to the last answer because that is the min vcover
+        while(!clique.isEmpty() && k > 0){
             startTime = System.nanoTime();
             priorClique = clique;
             clique = findVCover.findVertexCover(adjMatrix, k);
@@ -26,11 +28,14 @@ public class findClique {
             k--;
         }
 
+        // Save minimum clique
         clique = priorClique;
         k = clique.size();
+        // Sort the clique for human reading
         Collections.sort(clique);
 
         long timeElapsed = (endTime - startTime) / 1000000;
+        // Print out results
         System.out.print("G" + counter + " (" + vertexCount + ", " + edgeCount + ")");
         System.out.print("(size = " + k + " ms = " + timeElapsed + ") {");
         String delimiter = ", ";
@@ -69,13 +74,14 @@ public class findClique {
                     for (int j = 0; j < n; j++) {
                         // get next int in each line and add to adj matrix
                         int next = scan.nextInt();
+                        
                         // Construct the compliment of the adjMatrix given by the file
                         if(next == 0){
                             adjMatrix[i][j] = 1;
-                            edgeCount += next;
                         }
                         else {
                             adjMatrix[i][j] = 0;
+                            edgeCount += next;
                         }
                     }
                 }
