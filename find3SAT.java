@@ -15,14 +15,8 @@ public class find3SAT {
      * the number of literals ( |highest number in CNF| * 2),
      * and the number of nodes (number of literals + length of the CNF)
      */
-    public static int[][] fillGraph(int[][] graph, int[] cnfArray, int [] indexArray, int numLiterals, int numNodes) {
-        // initialize graph to have zeroes
-        for (int i = 0; i < numNodes; i++) {
-            for (int j = i; j < numNodes; j++) {
-                graph[i][j] = 0;
-            }
-        }
-
+    public static int[][] fillGraph(int[][] graph, int[] cnfArray, int [] indexArray, int numLiterals, int numNodes)
+    {
         // connect literals to themsleves
         for (int i = 0; i < numLiterals; i += 2) {
             graph[i][i] = 1;
@@ -56,26 +50,19 @@ public class find3SAT {
                 }
             }
         }
-
-        // for (int i = 0; i < numNodes; i++) {
-        //     for (int j = 0; j < numNodes; j++) {
-        //         System.out.print(graph[i][j] + " \t");
-        //     }
-        //     System.out.println("\n");
-        // }
         // returns a grpah of the CNF represented via an adjacency matrix
         return graph;
     }
 
+    /*
+    * the first numLiterals spots in this array contian the literals and their
+    * negations of the CNF
+    * the rmeinaing indices will be populated by the CNF itslef as read from the
+    * file
+    * the array indices of the literals will match their indices in the matrix
+    */
     public static int[] createIndexArray(int[] cnfArray, int numLiterals)
     {
-                /*
-         * the first numLiterals spots in this array contian the literals and their
-         * negations of the CNF
-         * the rmeinaing indices will be populated by the CNF itslef as read from the
-         * file
-         * the array indices of the literals will match their indices in the matrix
-         */
         int[] indexArray = new int[numLiterals + cnfArray.length];
 
         int counter = 1;
@@ -91,7 +78,7 @@ public class find3SAT {
             }
         }
 
-        for (int i = numLiterals; i < indexArray.length; i++) // add clause to the end of the index array
+        for (int i = numLiterals; i < indexArray.length; i++) // add CNF to the end of the index array
         {
             indexArray[i] = cnfArray[i - numLiterals];
         }
@@ -99,8 +86,7 @@ public class find3SAT {
         return indexArray;
     }
 
-    // takes a line read from the file and stores each integer in an index of an
-    // array
+    // takes a line read from the file and stores each integer in an index of an array
     public static int[] lineIntoArray(String input) {
         String[] parsedLine = input.split(" ", 0);
         int[] cnfArray = new int[parsedLine.length];
@@ -133,24 +119,30 @@ public class find3SAT {
             while (scan.hasNextLine())
             {
                 lineCount++;
-                int[] cnfArray = lineIntoArray(scan.nextLine());
-                int cnfLength = cnfArray.length;
-                int maxValue = findMaxLiteral(cnfArray);
-                int [] indexArray = createIndexArray(cnfArray, (maxValue * 2));
+                int[] cnfArray = lineIntoArray(scan.nextLine()); //creates an array of integers containing the CNF
+                int cnfLength = cnfArray.length; //number of literals in the CNF
+
+                int maxValue = findMaxLiteral(cnfArray); //finds the integer witht he highest absolute value in the CNF
+
+                int [] indexArray = createIndexArray(cnfArray, (maxValue * 2)); //and array that stores literals in the first maxValue * 2 indices and stores the CNF after them
+
                 int dimension = (maxValue * 2) + cnfArray.length; // number of rows and columns for the matrix
                 int[][] graph = new int[dimension][dimension];
-                long startTime = System.nanoTime();
-                graph = fillGraph(graph, cnfArray, indexArray, (maxValue * 2), dimension);
 
+                long startTime = System.nanoTime();
+                graph = fillGraph(graph, cnfArray, indexArray, (maxValue * 2), dimension); //create graph from the CNF represented by a matrix
+
+                //create object of findVCover class
                 findVCover findCover = new findVCover();
 
+                //create array lists to store vertex covers
                 ArrayList<Integer> vertexCover = new ArrayList<Integer>();
                 ArrayList<Integer> priorCover = new ArrayList<Integer>();
 
-                vertexCover = findCover.findVertexCover(graph, dimension);
+                vertexCover = findCover.findVertexCover(graph, dimension); //Calling findVertexCover method form findVCover class
 
                 int k = dimension;
-
+                //finding smallest possible k-vertex cover by decreasing k
                 while (!vertexCover.isEmpty() && k > 0) {
                     priorCover = vertexCover;
                     vertexCover = findCover.findVertexCover(graph, k);
@@ -163,39 +155,36 @@ public class find3SAT {
                 Collections.sort(vertexCover);
 
                 long elapsedTime = (endTime - startTime) / 1000000;
+
                 System.out.print("3CNF No. " + lineCount + ": [n=" + maxValue + " k = " + (cnfArray.length/3) + "] ("
-                        + elapsedTime + " ms) ");
+                    + elapsedTime + " ms) ");
 
-                // System.out.print("\nVertex Cover: [");
-                // String delimiter = ", ";
-                // StringJoiner joiner = new StringJoiner(delimiter);
-                // vertexCover.forEach(item -> joiner.add(item.toString()));
-                // System.out.print(joiner.toString());
-                // System.out.print("]\n");
-
-                // System.out.println("Index Array: " + Arrays.toString(indexArray));
-
-                // System.out.println("CNF Array: "+ Arrays.toString(cnfArray));
-
+                //an array to store truth assingments for the CNF
                 String [] truthArray = new String[cnfLength];
 
-                for(int j = 0; j < cnfLength; j++)
+                //assingin T, F, or X to correct indices
+                for(int j = 0; j < cnfLength; j++) //loop through CNF array
                 {
-                    for(int i = 0; i < vertexCover.size() && vertexCover.get(i) < (maxValue * 2); i++)
+                    for(int i = 0; i < vertexCover.size() && vertexCover.get(i) < (maxValue * 2); i++) //loop through vertex cover indices
                     {
-                        if(cnfArray[j] == indexArray[vertexCover.get(i)])
+                        if(cnfArray[j] == indexArray[vertexCover.get(i)]) //if indexArray at vertex from cover matches cnfArray set T
                         {
                             truthArray[j] = "T";
                         }
+                        else if(cnfArray[j] == indexArray[vertexCover.get(i)] * -1) //if the negation of the value in indexArray at index is equal to the value in cnfArray set F
+                        {
+                            truthArray[j] = "F";
+                        }
                     }
-                    if(truthArray[j] != "T")
+                    if(truthArray[j] != "T" && truthArray[j] != "F") //if neither true nor false because of cover set X
                     {
-                        truthArray[j] = "F";
+                        truthArray[j] = "X";
                     }
                 }
                 
                 boolean satisfiable = true;
                 int i = 0;
+                //determines if CNF is satisfoable by seeing if we have three Fs for nay of the clauses
                 while(satisfiable && i < cnfLength)
                 {
                     if(truthArray[i] == "F" && truthArray[i + 1] == "F" && truthArray[i + 2] == "F")
@@ -204,7 +193,7 @@ public class find3SAT {
                     }
                     i += 3;
                 }
-                
+                //prints truth assingment if the CNF was satisfaiable
                 if(satisfiable)
                 {
                     System.out.print("Solution: [ ");
@@ -216,15 +205,20 @@ public class find3SAT {
                         {
                             System.out.print(indexArray[vertexCover.get(i)] + " : T ");
                         }
-                        else
+                        else if(indexArray[vertexCover.get(i)] < 0)
                         {
                             System.out.print(Math.abs(indexArray[vertexCover.get(i)]) + " : F ");
+                        }
+                        else
+                        {
+                            System.out.print(Math.abs(indexArray[vertexCover.get(i)]) + " : X ");
                         }
                         i++;
                     }
                     System.out.println("]");
                 }
-                else{
+                else //prints random assingment to show that the CNF is not satisfiable
+                {
                     System.out.print("No Solution!\tRandom: [");
                     i = 0;
                     while(i < vertexCover.size() && vertexCover.get(i) < (maxValue * 2))
