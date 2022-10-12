@@ -134,6 +134,7 @@ public class find3SAT {
             {
                 lineCount++;
                 int[] cnfArray = lineIntoArray(scan.nextLine());
+                int cnfLength = cnfArray.length;
                 int maxValue = findMaxLiteral(cnfArray);
                 int [] indexArray = createIndexArray(cnfArray, (maxValue * 2));
                 int dimension = (maxValue * 2) + cnfArray.length; // number of rows and columns for the matrix
@@ -174,17 +175,40 @@ public class find3SAT {
 
                 // System.out.println("Index Array: " + Arrays.toString(indexArray));
 
-                boolean satisfiable = false;
+                // System.out.println("CNF Array: "+ Arrays.toString(cnfArray));
 
-                for(int i = 0; i < vertexCover.size() && vertexCover.get(i) < (maxValue * 2); i++)
+                String [] truthArray = new String[cnfLength];
+
+                for(int j = 0; j < cnfLength; j++)
                 {
-                    
+                    for(int i = 0; i < vertexCover.size() && vertexCover.get(i) < (maxValue * 2); i++)
+                    {
+                        if(cnfArray[j] == indexArray[vertexCover.get(i)])
+                        {
+                            truthArray[j] = "T";
+                        }
+                    }
+                    if(truthArray[j] != "T")
+                    {
+                        truthArray[j] = "F";
+                    }
+                }
+                
+                boolean satisfiable = true;
+                int i = 0;
+                while(satisfiable && i < cnfLength)
+                {
+                    if(truthArray[i] == "F" && truthArray[i + 1] == "F" && truthArray[i + 2] == "F")
+                    {
+                        satisfiable = false;
+                    }
+                    i += 3;
                 }
                 
                 if(satisfiable)
                 {
                     System.out.print("Solution: [ ");
-                    int i = 0;
+                    i = 0;
                     while(i < vertexCover.size() && vertexCover.get(i) < (maxValue * 2))
                     {
                         
@@ -201,18 +225,35 @@ public class find3SAT {
                     System.out.println("]");
                 }
                 else{
-                    System.out.println("No Solution!\tRandom: [");
-
+                    System.out.print("No Solution!\tRandom: [");
+                    i = 0;
+                    while(i < vertexCover.size() && vertexCover.get(i) < (maxValue * 2))
+                    {
+                        
+                        if(indexArray[vertexCover.get(i)] > 0)
+                        {
+                            System.out.print(indexArray[vertexCover.get(i)] + " : T ");
+                        }
+                        else
+                        {
+                            System.out.print(Math.abs(indexArray[vertexCover.get(i)]) + " : F ");
+                        }
+                        i++;
+                    }
                     System.out.println("]");
                 }
 
-                int cnfLength = cnfArray.length;
-
-                for(int i = 0; i < (cnfLength - 3); i+=3)
+                for(i = 0; i < (cnfLength - 3); i+=3)
                 {
                     System.out.print("( " + cnfArray[i] + "|" + cnfArray[i+1] + "|" + cnfArray[i+2] + " )^");
                 }
-                System.out.println("( " + cnfArray[cnfLength- 3] + "|" + cnfArray[cnfLength - 2] + "|" + cnfArray[cnfLength - 1] + " ) ==>\n");
+                System.out.println("( " + cnfArray[cnfLength- 3] + "|" + cnfArray[cnfLength - 2] + "|" + cnfArray[cnfLength - 1] + " ) ==>");
+
+                for(i = 0; i < (cnfLength - 3); i+=3)
+                {
+                    System.out.print("( " + truthArray[i] + "|" + truthArray[i+1] + "|" + truthArray[i+2] + " )^");
+                }
+                System.out.println("( " + truthArray[cnfLength- 3] + "|" + truthArray[cnfLength - 2] + "|" + truthArray[cnfLength - 1] + " )\n");
             }
 
             scan.close();
