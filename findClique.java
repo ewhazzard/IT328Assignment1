@@ -26,6 +26,7 @@ public class findClique {
             clique = findVCover.findVertexCover(adjMatrix, k);
             endTime = System.nanoTime();
             k--;
+            System.out.println(clique);
         }
 
         // Save minimum clique
@@ -69,25 +70,38 @@ public class findClique {
 
                 int edgeCount = 0;
 
-                // count the edges
+
+                // count the edges of the original graph
                 for (int i = 0; i < n; i++) {
                     for (int j = 0; j < n; j++) {
                         // get next int in each line and add to adj matrix
                         int next = scan.nextInt();
-                        
-                        // Construct the compliment of the adjMatrix given by the file
-                        if(next == 0){
+                        adjMatrix[i][j] = next;
+                        // add value (0 or 1) to the edge count
+                        edgeCount += next;
+                    }
+                }
+                // Find the compliment of the given graph by flipping 0's to 1's and 1's to 0's
+                for(int i = 0; i < n; i++){
+                    for(int j = 0; j < n; j++){
+                        if(adjMatrix[i][j] == 0){
                             adjMatrix[i][j] = 1;
                         }
                         else {
                             adjMatrix[i][j] = 0;
-                            edgeCount += next;
                         }
                     }
+                }               
+                // set diagonal to 1 to correctly connect vertices with themselves in the complement graph
+                for (int i = 0; i < adjMatrix.length; i++) {
+                    adjMatrix[i][i] = 1;
                 }
+                // Set the number of vertices to the first number read in this file 
                 int vertexCount = n;
+                // Account for symetry of the graph and vertices being connected to themselves
                 edgeCount = (edgeCount - vertexCount) / 2;
                 constructClique(adjMatrix, vertexCount, edgeCount, counter);
+                break;
             }
             System.out.print("***");
             scan.close();
