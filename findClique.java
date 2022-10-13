@@ -28,16 +28,11 @@ public class findClique {
         // While the clique is not empty, decrease k, find a VCover of size k for
         // adjMatrix and save it to clique. Once we break this loop we will go back to
         // the last answer because that is the min vcover
-        while (!clique.isEmpty() && k > 0) {
-            startTime = System.nanoTime();
+        while (!clique.isEmpty() && k >= 0) {
             priorClique = clique;
             clique = findVCover.findVertexCover(adjMatrix, k);
-            endTime = System.nanoTime();
             k--;
         }
-
-        System.out.println(clique);
-        System.out.println(priorClique);
 
         // Save minimum clique
         clique = priorClique;
@@ -98,9 +93,9 @@ public class findClique {
 
                 // set diagonal to 1 to correctly connect vertices with themselves in the
                 // complement graph
-                for (int i = 0; i < adjMatrix.length; i++) {
-                    adjMatrix[i][i] = 1;
-                }
+                // for (int i = 0; i < adjMatrix.length; i++) {
+                // adjMatrix[i][i] = 1;
+                // }
                 // Set the number of vertices to the first number read in this file
                 int vertexCount = n;
                 // Account for symetry of the graph and vertices being connected to themselves
