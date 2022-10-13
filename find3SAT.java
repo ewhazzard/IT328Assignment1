@@ -2,18 +2,25 @@
 /**
  * Program 1 - IT 328
  * 10/9/2022
+ * 
  * Authors: Audra Heistand (aeheis1), Matt Tobeck (mtobec1), and Evan Hazzard (ewhazza)
+ * @author Matt Tobeck (mtobec1)
+ * @author Evan Hazzard (ewhazza)
+ * @author Audra Heistand (aeheis1)
  */
 import java.io.*;
 import java.util.*;
 
-public class find3SAT {
-    /*
-     * takes a 2D array that will serve as an adjacency representation of the grpah
-     * of the CNF,
-     * an array of integers representing the CNF,
-     * the number of literals ( |highest number in CNF| * 2),
-     * and the number of nodes (number of literals + length of the CNF)
+public class find3SAT
+{
+    /**
+     * builds a graph equivalent of a CNF using an adjacency matrix
+     * @param graph the 2D array/adjacency matrix that has been iniitalized with the proper
+     * @param cnfArray int array that holds the literla from the cnf
+     * @param indexArray an array whose elements match the axes of the matrix (literals first then clauses)
+     * @param numLiterals equivalent to two times literal with the largest absolute value
+     * @param numNodes the number of vertices in the graph (equivalent to numLiterals + length of CNF)
+     * @return the same adjacency matrix but now with 1s to represent edges between vertices
      */
     public static int[][] fillGraph(int[][] graph, int[] cnfArray, int [] indexArray, int numLiterals, int numNodes)
     {
@@ -54,12 +61,15 @@ public class find3SAT {
         return graph;
     }
 
-    /*
+    /**
     * the first numLiterals spots in this array contian the literals and their
     * negations of the CNF
     * the rmeinaing indices will be populated by the CNF itslef as read from the
     * file
     * the array indices of the literals will match their indices in the matrix
+    *@param cnfArray int array that holds the literla from the cnf
+    *@param numLiterals equivalent to two times the literal with the largest absolute value
+    *@return an array whose elements match the axes of the matrix (literals first then clauses)
     */
     public static int[] createIndexArray(int[] cnfArray, int numLiterals)
     {
@@ -86,7 +96,10 @@ public class find3SAT {
         return indexArray;
     }
 
-    // takes a line read from the file and stores each integer in an index of an array
+    /** converts line from cnfs2022.txt to an array of ints representing te clauses of the CNF 
+     * @param input the line read in fomr the file
+     * @return cnfArray the array representation of the CNF where each index continas a literal
+     */ 
     public static int[] lineIntoArray(String input) {
         String[] parsedLine = input.split(" ", 0);
         int[] cnfArray = new int[parsedLine.length];
@@ -96,8 +109,12 @@ public class find3SAT {
         return cnfArray;
     }
 
-    // takes the array form of the CNF and finds the intger with the highest
-    // absolute value
+    
+    /** takes the array form of the CNF and finds the intger with the highest
+     *absolute value
+     * @param cnfArray int array that holds the literla from the cnf
+     * @return the largest absolute value in the cnfArray
+     */
     public static int findMaxLiteral(int[] cnfArray) {
         int max = 0;
         for (int i = 0; i < cnfArray.length; i++) {
