@@ -18,7 +18,7 @@ public class findClique {
         ArrayList<Integer> priorVCover = new ArrayList<Integer>();
 
         // While the clique is not empty, decrease k, find a VCover of size k for adjMatrix and save it to clique. Once we break this loop we will go back to the last answer because that is the min vcover
-        while(!vertexCover.isEmpty() && k > 0){
+        while(!vertexCover.isEmpty() && k >= 0){
             priorVCover = vertexCover;
             vertexCover = findVCover.findVertexCover(adjMatrix, k);
             k--;
@@ -110,7 +110,7 @@ public class findClique {
                 for(int i = 0; i < vertexCount; i++){
                     vertices.add(i);
                 }
-
+                
                 // Remove any vertices that appear in the complements k-vertex cover to construct a k-clique
                 for(int i = 0; i < vertices.size(); i++){
                     for(int j = 0; j < complementVertexCover.size(); j++){
