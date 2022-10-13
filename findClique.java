@@ -9,7 +9,14 @@ import java.util.*;
 
 public class findClique {
    
-    // Given the compliment of a graph, call findVCover and return the vertex cover
+    /**
+     * Description: This method takes in an adjacency matrix and information about that graph and outputs the minimum vertex cover
+     * findVertexCover is utilized in this method to incrementally determine the smallest possible vertex cover for a given graph
+     * @param adjMatrix - an adjacency matrix representing the input graph
+     * @param vertexCount - the number of vertices in the graph
+     * @param edgeCount - the number of edges in the graph
+     * @return vertexCover of adjMatrix
+     */
     public static ArrayList<Integer> constructVCover(int[][] adjMatrix, int vertexCount, int edgeCount) {
         // Start k at the number of vertices, the maximum clique
         int k = vertexCount;
@@ -46,8 +53,11 @@ public class findClique {
             // Initialize timing variables
             long startTime = 0;
             long endTime = 0;
+            // Print starting lines
             System.out.println("* Max Cliques in graphs in graphs2022.txt (reduced to K-Vertex Cover) *");
             System.out.println("\t(|V|,|E|) (size, ms used) Vertex Cover");
+            
+            // Read the file
             while (scan.hasNextInt()) {
                 counter++;
                 // n is the number of rows and columns of the adj matrix
@@ -87,23 +97,19 @@ public class findClique {
                 for (int i = 0; i < adjMatrix.length; i++) {
                     complementMatrix[i][i] = 1;
                 }
+
                 // Set the number of vertices to the first number read in this file 
                 int vertexCount = n;
-                // Account for symetry of the graph and vertices being connected to themselves
+
+                // Account for symetry of the graph (divide by 2) and vertices being connected to themselves(- vertexCount)
                 edgeCount = (edgeCount - vertexCount) / 2;
 
                 // Start the timer on the problem
                 startTime = System.nanoTime();
 
                 // Construct the minimum vertexCover of the complement
-                ArrayList<Integer> complementVertexCover = new ArrayList<Integer>();
-                complementVertexCover = constructVCover(complementMatrix, vertexCount, edgeCount);
-                // Construct the minimum vertexCover of the original graph
-                ArrayList<Integer> originalVertexCover = new ArrayList<Integer>();
-                originalVertexCover = constructVCover(adjMatrix, vertexCount, edgeCount);
-
-                // Create a new ArrayList object to hold the clique
-                ArrayList<Integer> clique = new ArrayList<Integer>();
+                ArrayList<Integer> complementVertexCover = constructVCover(complementMatrix, vertexCount, edgeCount);
+                
 
                 // Create an array of the vertices in the graph
                 ArrayList<Integer> vertices = new ArrayList<Integer>();
@@ -119,9 +125,11 @@ public class findClique {
                         }
                     }
                 }
-                clique = vertices;
 
+                // Create a new ArrayList object to hold the clique
+                ArrayList<Integer> clique = vertices;
 
+                // End time of the algorithm's completion
                 endTime = System.nanoTime();
                 long timeElapsed = (endTime - startTime) / 1000000;
                 // Print out results
