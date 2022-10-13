@@ -2,7 +2,11 @@
 /**
  * Program 1 - IT 328
  * 10/9/2022
+ * 
  * Authors: Audra Heistand (aeheis1), Matt Tobeck (mtobec1), and Evan Hazzard (ewhazza)
+ * @author Matt Tobeck (mtobec1)
+ * @author Evan Hazzard (ewhazza)
+ * @author Audra Heistand (aeheis1)
  */
 import java.beans.IndexedPropertyChangeEvent;
 import java.io.*;
@@ -11,8 +15,14 @@ import java.util.*;
 
 class findVCover {
 
-    // graph is the undirected graph G and k is the number in k-vertex cover
-    // find k-vertex cover
+    /**
+     * finds a vertex cover using an adjacency matrix and k value
+     * 
+     * @param adjacency matrix read from txt file
+     * @param k         value representing the number of nodes we are wanting to be
+     *                  in the cover
+     * @return list of vertices included in the vertex cover
+     */
     public static ArrayList<Integer> findVertexCover(int adjMatrix[][], int k) {
 
         // set diagonal to 0 for easier processing
@@ -41,11 +51,11 @@ class findVCover {
         int numBackTracks = 0;
         int numShuffle = 0;
 
-        // n can be adjusted to accomodate larger graphs. In this case, 100 is big
+        // n can be adjusted to accomodate larger graphs. In this case, 300 is big
         // enough that the probability of finding the optimal solution is
         // high enough to produce it every time without slowing down the system
         // substantially
-        int n = 100;
+        int n = 300;
 
         // while we don't have a vertex cover, try removing vertices
         // if you checked all the vertices in one order, take front and move to back.
@@ -107,7 +117,16 @@ class findVCover {
 
     }
 
-    // determine if # of true vertices = k. If so, is there is a vertex cover
+    /**
+     * checks if there is a vertex cover based on the number of vertices marked as
+     * true in the cover array is equal to k
+     * 
+     * @param cover is a boolean array of vertices indicating if they are included
+     *              in the cover (true = in cover, false = not in cover)
+     * @param k     value representing the number of nodes we are wanting to be
+     *              in the cover
+     * @return true if there is a k-vertex cover, false if there is not
+     */
     private static boolean isVertexCover(boolean[] cover, int k) {
         int count = 0;
         // get # of true values
