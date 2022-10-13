@@ -3,7 +3,6 @@
  * Program 1 - IT 328
  * 10/9/2022
  * 
- * Authors: Audra Heistand (aeheis1), Matt Tobeck (mtobec1), and Evan Hazzard (ewhazza)
  * @author Matt Tobeck (mtobec1)
  * @author Evan Hazzard (ewhazza)
  * @author Audra Heistand (aeheis1)
