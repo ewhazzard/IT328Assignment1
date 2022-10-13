@@ -95,26 +95,31 @@ public class findClique {
                 // Start the timer on the problem
                 startTime = System.nanoTime();
 
-                // Construct the minimum vertexCover
+                // Construct the minimum vertexCover of the complement
                 ArrayList<Integer> complementVertexCover = new ArrayList<Integer>();
                 complementVertexCover = constructVCover(complementMatrix, vertexCount, edgeCount);
-
+                // Construct the minimum vertexCover of the original graph
                 ArrayList<Integer> originalVertexCover = new ArrayList<Integer>();
                 originalVertexCover = constructVCover(adjMatrix, vertexCount, edgeCount);
 
+                // Create a new ArrayList object to hold the clique
                 ArrayList<Integer> clique = new ArrayList<Integer>();
 
-                System.out.println(complementVertexCover);
-                System.out.println(originalVertexCover);
+                // Create an array of the vertices in the graph
+                ArrayList<Integer> vertices = new ArrayList<Integer>();
+                for(int i = 0; i < vertexCount; i++){
+                    vertices.add(i);
+                }
 
-                // // clique = originalVertexCover - complementVertexCover
-                // for(int i = 0; i < originalVertexCover.size(); i++){
-                //     for(int j =0; j < complementVertexCover.size(); j++){
-                //         if(originalVertexCover.get(i).equals(complementVertexCover.get(j))){
-                //             clique.add(originalVertexCover.get(i));
-                //         }
-                //     }
-                // }
+                // Remove any vertices that appear in the complements k-vertex cover to construct a k-clique
+                for(int i = 0; i < vertices.size(); i++){
+                    for(int j = 0; j < complementVertexCover.size(); j++){
+                        if(complementVertexCover.get(j).equals(vertices.get(i))){
+                            vertices.remove(i);
+                        }
+                    }
+                }
+                clique = vertices;
 
 
                 endTime = System.nanoTime();
@@ -127,7 +132,7 @@ public class findClique {
                 clique.forEach(item -> joiner.add(item.toString()));
                 System.out.print(joiner.toString());
                 System.out.print("}\n");
-                break;
+                
             }
             System.out.print("***");
             scan.close();
